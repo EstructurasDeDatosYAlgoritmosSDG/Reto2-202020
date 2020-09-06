@@ -53,3 +53,32 @@ operación seleccionada.
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
+def printMenu():
+    print("Bienvenido")
+    print("1- Información archivo cargado")
+    print("0- Salir")
+
+while True:
+    printMenu()
+    inputs = input('Seleccione una opción para continuar\n')
+    lista = []
+    if int(inputs[0]) == 1:
+        lista = controller.loadCSVFile('Data/themoviesdb/SmallMoviesDetailsCleaned.csv', 1)
+        datos = controller.infoArchivoCsv(lista)
+        print('El número de películas cargadas es:', datos[0],'\n')
+        print('Primera película:\n')
+        print('Título:', datos[1][0])
+        print('Fecha de estreno:',datos[1][1])
+        print('Promedio de votación:',datos[1][2])
+        print('Número de votos:',datos[1][3])
+        print('Idioma:',datos[1][4],'\n')
+        print('Última película:\n')
+        print('Título:', datos[2][0])
+        print('Fecha de estreno:',datos[2][1])
+        print('Promedio de votación:',datos[2][2])
+        print('Número de votos:',datos[2][3])
+        print('Idioma:',datos[2][4],'\n')
+
+    else:
+        sys.exit(0)
+sys.exit(0)

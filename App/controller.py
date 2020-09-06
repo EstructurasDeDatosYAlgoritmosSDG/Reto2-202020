@@ -23,6 +23,7 @@
 import config as cf
 from App import model
 import csv
+from DISClib.ADT import list as lt
 
 
 """
@@ -36,6 +37,34 @@ recae sobre el controlador.
 # ___________________________________________________
 #  Inicializacion del catalogo
 # ___________________________________________________
+
+def loadCSVFile(file, tipo_lista, cmpfunction=None, sep=";"):
+    lista = model.loadCSVFile(file, tipo_lista, cmpfunction=None, sep=";")
+    return lista
+
+def infoArchivoCsv(lista: list):
+    num_peliculas = lista['size']
+    #Primera pelicula
+    primer_elemento = lt.firstElement(lista)
+    titulo_primera = primer_elemento['original_title']
+    fecha_primera = primer_elemento['release_date']
+    vote_average_primera = primer_elemento['vote_average']
+    vote_count_primera = primer_elemento['vote_count']
+    language_primera = primer_elemento['original_language']
+    primera = [titulo_primera, fecha_primera, vote_average_primera, vote_count_primera, language_primera]
+    #Ultima pelicula
+    ultimo_elemento = lt.lastElement(lista)
+    titulo_ultima = ultimo_elemento['original_title']
+    fecha_ultima = ultimo_elemento['release_date']
+    vote_average_ultima = ultimo_elemento['vote_average']
+    vote_count_ultima = ultimo_elemento['vote_count']
+    language_ultima = ultimo_elemento['original_language']
+    ultima = [titulo_ultima, fecha_ultima, vote_average_ultima, vote_count_ultima, language_ultima]
+    return num_peliculas, primera, ultima
+
+
+
+    
 
 
 
