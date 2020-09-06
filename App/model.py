@@ -19,6 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  """
+from time import process_time 
+import sys
+import csv
 import config
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
@@ -32,10 +35,41 @@ es decir contiene los modelos con los datos en memoria
 """
 
 # -----------------------------------------------------
-# API del TAD Catalogo de Libros
+# API del TAD Catalogo de peliculas
 # -----------------------------------------------------
 
-
+def loadCSVFile (file, tipo_lista, cmpfunction=None, sep=";"):
+    """
+    Carga un archivo csv a una lista
+    Args:
+        file
+            Archivo csv del cual se importaran los datos
+        sep = ";"
+            Separador utilizado para determinar cada objeto dentro del archivo
+        Try:
+        Intenta cargar el archivo CSV a la lista que se le pasa por parametro, si encuentra algun error
+        Borra la lista e informa al usuario
+    Returns: None  
+    """
+    if tipo_lista == 1:
+        lst = lt.newList("ARRAY_LIST") #Usando implementacion arraylist
+    elif tipo_lista == 2:
+        lst = lt.newList("SINGLE_LINKED") #Usando implementacion single linked
+    print("Cargando archivo ....")
+    t1_start = process_time() #tiempo inicial
+    dialect = csv.excel()
+    dialect.delimiter=sep
+    try:
+        with open(file, encoding="utf-8") as csvfile:
+            spamreader = csv.DictReader(csvfile, dialect=dialect)
+            for row in spamreader: 
+                lt.addLast(lst,row)
+    except:
+        print("Hubo un error con la carga del archivo")
+    t1_stop = process_time() #tiempo final
+    print("Tiempo de ejecución",t1_stop-t1_start,"segundos")
+    
+    return lst
 
 # Funciones para agregar informacion al catalogo
 
