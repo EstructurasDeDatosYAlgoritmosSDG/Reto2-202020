@@ -56,6 +56,7 @@ operación seleccionada.
 def printMenu():
     print("Bienvenido")
     print("1- Información archivo cargado")
+    print("2- Conocer compañia de producción")
     print("0- Salir")
 
 while True:
@@ -78,6 +79,15 @@ while True:
         print('Promedio de votación:',datos[2][2])
         print('Número de votos:',datos[2][3])
         print('Idioma:',datos[2][4],'\n')
+    elif  int(inputs[0]) == 2:
+        productora = input('Ingrese el nombre de la compañia de producción: \n')
+        lista = controller.loadCSVFile('Data/themoviesdb/SmallMoviesDetailsCleaned.csv', 1)
+        datos = controller.infoProductora(lista, productora)
+        print('La lista de todas las películas producidas por', productora, 'es:')
+        for pelicula in datos[0]:
+            print(pelicula)
+        print('El total de películas producidas por', productora, 'es de:', datos[1])
+        print('El promedio de calificación de las películas producidas por', productora, 'es de:', datos[2])
 
     else:
         sys.exit(0)

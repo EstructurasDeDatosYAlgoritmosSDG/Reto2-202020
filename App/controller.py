@@ -64,6 +64,8 @@ def infoArchivoCsv(lista: list):
 
 
 
+
+
     
 
 
