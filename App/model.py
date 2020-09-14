@@ -71,6 +71,34 @@ def loadCSVFile (file, tipo_lista, cmpfunction=None, sep=";"):
     
     return lst
 
+def descubrir_productoras(lista: list, productora: str) -> tuple:
+    tamanio_lista = lista['size'] 
+    mapa_companias = mp.newMap(tamanio_lista,maptype='CHAINING',loadfactor=1.5)
+    i = 1
+    while i <= tamanio_lista:
+        pelicula = lt.getElement(lista, i)
+        productora = pelicula['production_companies']
+        if not mp.contains(mapa_companias, productora):
+            mapa_compania = mp.newMap(0,maptype='CHAINING',loadfactor=1.5)
+            mp.put(mapa_companias, productora, mapa_compania)
+        nombre_pelicula = pelicula['original_title']
+        vote_average = pelicula['vote_average']
+        mp.put(mapa_companias[mapa_compania],nombre_pelicula,vote_average)
+        i += 1
+    mapa_nombre_peliculas = mp.get(mapa_companias, productora)
+    i = 1
+    lista_nombres = lt.newList(datastructure='ARRAY_LIST')
+    tamanio_mapa_nombre_peliculas = mp.size(mapa_nombre_peliculas)
+    suma = 0
+    while i <= tamanio_mapa_nombre_peliculas:
+        pelicula = mp.get(mapa_nombre_peliculas,i)
+        nombre_pelicula = pelicula[0]
+        vote_average = pelicula[1]
+        lt.addLast(nombre_pelicula)
+        suma += vote_average
+    promedio = suma / tamanio_mapa_nombre_peliculas
+    return lista_nombres, tamanio_mapa_nombre_peliculas, promedio
+
 # Funciones para agregar informacion al catalogo
 
 
