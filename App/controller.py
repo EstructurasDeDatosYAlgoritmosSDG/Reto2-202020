@@ -71,6 +71,8 @@ def infoProductora(lista:list, productora:str):
 
 
 
+
+
     
 
 
