@@ -62,12 +62,14 @@ def infoArchivoCsv(lista: list):
     ultima = [titulo_ultima, fecha_ultima, vote_average_ultima, vote_count_ultima, language_ultima]
     return num_peliculas, primera, ultima
 
-def infoProductora(lista:list, productora:str):
+def infoProductora(mapa, lista:list):
     #Llama los datos obtenidos en model
-
-    resultado = model.descubrir_prodductora(lista, productora)
-
+    resultado = model.descubrir_productoras(mapa,lista)
     return resultado
+
+def cargar_catalogo(lista:list):
+    catalogo = model.nuevo_catalogo(lista)
+    return catalogo
 
 
 

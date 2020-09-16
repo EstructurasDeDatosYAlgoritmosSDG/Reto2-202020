@@ -19,6 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  """
+
 from time import process_time 
 import sys
 import csv
@@ -68,49 +69,69 @@ def loadCSVFile (file, tipo_lista, cmpfunction=None, sep=";"):
         print("Hubo un error con la carga del archivo")
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución",t1_stop-t1_start,"segundos")
-    
     return lst
 
-def descubrir_productoras(lista: list, productora: str) -> tuple:
-    tamanio_lista = lista['size'] 
-    mapa_companias = mp.newMap(tamanio_lista,maptype='CHAINING',loadfactor=1.5)
+def nuevo_catalogo(lista: list):
+    catalogo = {"productoras": mapa_productoras(lista)}
+    return catalogo
+
+# ==============================
+# Funciones para agregar informacion al catalogo
+# ==============================
+
+def mapa_productoras(lista: list):
+    tamanio_lista = lista['size']
+    mapa_productoras = mp.newMap(numelements=tamanio_lista,maptype='PROBING',loadfactor=0.5, comparefunction=comparar_productoras)
     i = 1
     while i <= tamanio_lista:
         pelicula = lt.getElement(lista, i)
         productora = pelicula['production_companies']
-        if not mp.contains(mapa_companias, productora):
-            mapa_compania = mp.newMap(0,maptype='CHAINING',loadfactor=1.5)
-            mp.put(mapa_companias, productora, mapa_compania)
         nombre_pelicula = pelicula['original_title']
         vote_average = pelicula['vote_average']
-        mp.put(mapa_companias[mapa_compania],nombre_pelicula,vote_average)
+        existe_productora = mp.contains(mapa_productoras, productora)
+        tupla = nombre_pelicula, vote_average
+        if not existe_productora:
+            lista_pelicula = lt.newList(datastructure='SINGLE_LINKED')
+            mp.put(mapa_productoras,productora,lista_pelicula)
+        entrada = mp.get(mapa_productoras, productora)
+        lt.addLast(entrada['value'], tupla)
         i += 1
-    mapa_nombre_peliculas = mp.get(mapa_companias, productora)
-    i = 1
-    lista_nombres = lt.newList(datastructure='ARRAY_LIST')
-    tamanio_mapa_nombre_peliculas = mp.size(mapa_nombre_peliculas)
-    suma = 0
-    while i <= tamanio_mapa_nombre_peliculas:
-        pelicula = mp.get(mapa_nombre_peliculas,i)
-        nombre_pelicula = pelicula[0]
-        vote_average = pelicula[1]
-        lt.addLast(nombre_pelicula)
-        suma += vote_average
-    promedio = suma / tamanio_mapa_nombre_peliculas
-    return lista_nombres, tamanio_mapa_nombre_peliculas, promedio
-
-# Funciones para agregar informacion al catalogo
-
-
+    return mapa_productoras
 
 # ==============================
 # Funciones de consulta
 # ==============================
 
-
+def descubrir_productoras(mapa, productora: str) -> tuple:
+    entrada = mp.get(mapa, productora)
+    lista_peliculas = entrada['value']
+    total_peliculas = lt.size(entrada['value'])
+    peliculas = lt.newList(datastructure='ARRAY_LIST')
+    i = 1
+    suma = 0
+    while i <= total_peliculas:
+        pelicula = lt.getElement(lista_peliculas, i)
+        nombre_pelicula = pelicula[0]
+        lt.addLast(peliculas, nombre_pelicula)
+        vote_average = float(pelicula[1])
+        suma += vote_average
+        i += 1
+    promedio = round(suma/total_peliculas, 2)
+    return peliculas, total_peliculas, promedio
 
 # ==============================
 # Funciones de Comparacion
 # ==============================
 
-
+def comparar_productoras(keyname, author):
+    """
+    Compara dos productoras. El primero es una cadena
+    y el segundo un entry de un map
+    """
+    authentry = me.getKey(author)
+    if (keyname == authentry):
+        return 0
+    elif (keyname > authentry):
+        return 1
+    else:
+        return -1
