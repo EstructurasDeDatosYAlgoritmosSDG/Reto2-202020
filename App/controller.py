@@ -71,6 +71,10 @@ def infoDirector(mapa, director):
     resultado = model.descubrir_director(mapa, director)
     return resultado
 
+def infoPais(mapa, pais):
+    resultado = model.descubrir_pais(mapa, pais)
+    return resultado
+
 def cargar_catalogo(details:list, casting: list):
     catalogo = model.nuevo_catalogo(details,casting)
     return catalogo
