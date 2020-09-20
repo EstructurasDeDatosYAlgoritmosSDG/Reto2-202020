@@ -73,7 +73,8 @@ def loadCSVFile (file, tipo_lista, cmpfunction=None, sep=";"):
 
 def nuevo_catalogo(details: list, casting: list):
     catalogo = {"productoras": mapa_productoras(details),
-                "directores": mapa_directores(casting, details)}
+                "directores": mapa_directores(casting, details),
+                "paises": mapa_paises(casting, details)}
     return catalogo
 
 # ==============================
@@ -126,6 +127,34 @@ def mapa_directores(casting: list, details: list):
         i += 1
     return mapa_directores
 
+def mapa_paises(casting: list, details: list):
+    tamanio_casting = casting['size']
+    mapa_paises = mp.newMap(numelements=tamanio_casting,maptype='PROBING',loadfactor=0.5, comparefunction=comparar_paises)
+    tamanio_details = details['size']
+    i = 1
+    while i <= tamanio_details:
+        pelicula_casting = lt.getElement(casting, i)
+        pelicula_details = lt.getElement(details, i)
+        director = pelicula_casting['director_name']
+        id_casting = pelicula_casting['id']
+        id_details = pelicula_details['\ufeffid']
+        anio_produccion = pelicula_details['release_date']
+        nombre_pelicula = pelicula_details['original_title']
+        pais_produccion = pelicula_details['production_countries']
+        tupla = nombre_pelicula, anio_produccion, director
+        if id_casting != id_details:
+            print('Super error')
+        existe_pais = mp.contains(mapa_paises, pais_produccion)
+        if not existe_pais:
+            lista_pais = lt.newList(datastructure='SINGLE_LINKED')
+            mp.put(mapa_paises,pais_produccion,lista_pais)
+        entrada = mp.get(mapa_paises, pais_produccion)
+        lista = entrada['value']
+        lt.addLast(lista, tupla)
+        mp.put(mapa_paises, pais_produccion, lista)
+        i += 1
+    return mapa_paises
+
 # ==============================
 # Funciones de consulta
 # ==============================
@@ -164,6 +193,13 @@ def descubrir_director(mapa, director: str) -> tuple:
     promedio = round(suma/total_peliculas, 2)
     return peliculas, total_peliculas, promedio
 
+def descubrir_pais(mapa, pais: str) -> tuple:
+    entrada = mp.get(mapa, pais)
+    lista_peliculas = entrada['value']
+    total_peliculas = lt.size(entrada['value'])
+    peliculas = lista_peliculas
+    return peliculas, total_peliculas
+
 # ==============================
 # Funciones de Comparacion
 # ==============================
@@ -182,6 +218,19 @@ def comparar_productoras(keyname, author):
         return -1
 
 def comparar_directores(keyname, author):
+    """
+    Compara dos productoras. El primero es una cadena
+    y el segundo un entry de un map
+    """
+    authentry = me.getKey(author)
+    if (keyname == authentry):
+        return 0
+    elif (keyname > authentry):
+        return 1
+    else:
+        return -1
+
+def comparar_paises(keyname, author):
     """
     Compara dos productoras. El primero es una cadena
     y el segundo un entry de un map

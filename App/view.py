@@ -61,6 +61,7 @@ def printMenu():
     print("2- Cargar catálogo")
     print('3- Conocer compañia de producción')
     print('4- Conocer productor')
+    print('5- Conocer país')
     print("0- Salir")
 
 def main():
@@ -123,6 +124,19 @@ def main():
                 i += 1
             print('\nLa cantidad de películas producidas por',director,'es de:', datos[1])
             print('\nLa calificación promedio de las películas del director', director, 'es de:',datos[2], '\n')
+            t1_stop = process_time() #tiempo final
+            print("Tiempo de ejecución",t1_stop-t1_start,"segundos\n")
+        
+        elif  int(inputs[0]) == 5:
+            t1_start = process_time() #tiempo inicial
+            pais = input('Ingrese el nombre del país de producción: \n')
+            datos = controller.infoPais(catalogo['paises'],pais)
+            print('\nLa lista de películas producidas en el país',pais,'es:\n')
+            i = 1
+            while i <= datos[1]:
+                pelicula = lt.getElement(datos[0], i)
+                print('El nombre de la película es:', pelicula[0], '\nLa fecha de producción es:', pelicula[1], '\nEl productor de la película es:', pelicula[2],'\n')
+                i += 1
             t1_stop = process_time() #tiempo final
             print("Tiempo de ejecución",t1_stop-t1_start,"segundos\n")
 
