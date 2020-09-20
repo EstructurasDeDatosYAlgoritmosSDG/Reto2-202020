@@ -100,6 +100,7 @@ def mapa_productoras(lista: list):
     return mapa_productoras
 
 def mapa_directores(casting: list, details: list):
+    # Esta funcion hace el mapa de los directores
     tamanio_casting = casting['size']
     mapa_directores = mp.newMap(numelements=tamanio_casting,maptype='PROBING',loadfactor=0.5, comparefunction=comparar_directores)
     tamanio_details = details['size']
