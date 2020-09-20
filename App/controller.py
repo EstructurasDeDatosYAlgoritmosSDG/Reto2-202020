@@ -67,8 +67,12 @@ def infoProductora(mapa, lista:list):
     resultado = model.descubrir_productoras(mapa,lista)
     return resultado
 
-def cargar_catalogo(lista:list):
-    catalogo = model.nuevo_catalogo(lista)
+def infoDirector(mapa, director):
+    resultado = model.descubrir_director(mapa, director)
+    return resultado
+
+def cargar_catalogo(details:list, casting: list):
+    catalogo = model.nuevo_catalogo(details,casting)
     return catalogo
 
 

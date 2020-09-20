@@ -71,8 +71,9 @@ def loadCSVFile (file, tipo_lista, cmpfunction=None, sep=";"):
     print("Tiempo de ejecución",t1_stop-t1_start,"segundos")
     return lst
 
-def nuevo_catalogo(lista: list):
-    catalogo = {"productoras": mapa_productoras(lista)}
+def nuevo_catalogo(details: list, casting: list):
+    catalogo = {"productoras": mapa_productoras(details),
+                "directores": mapa_directores(casting, details)}
     return catalogo
 
 # ==============================
@@ -98,6 +99,33 @@ def mapa_productoras(lista: list):
         i += 1
     return mapa_productoras
 
+def mapa_directores(casting: list, details: list):
+    tamanio_casting = casting['size']
+    mapa_directores = mp.newMap(numelements=tamanio_casting,maptype='PROBING',loadfactor=0.5, comparefunction=comparar_directores)
+    tamanio_details = details['size']
+    i = 1
+    while i <= tamanio_details:
+        pelicula_casting = lt.getElement(casting, i)
+        pelicula_details = lt.getElement(details, i)
+        director = pelicula_casting['director_name']
+        id_casting = pelicula_casting['id']
+        id_details = pelicula_details['\ufeffid']
+        vote_average = pelicula_details['vote_average']
+        nombre_pelicula = pelicula_details['original_title']
+        tupla = nombre_pelicula, vote_average
+        if id_casting != id_details:
+            print('Super error')
+        existe_director = mp.contains(mapa_directores, director)
+        if not existe_director:
+            lista_director = lt.newList(datastructure='SINGLE_LINKED')
+            mp.put(mapa_directores,director,lista_director)
+        entrada = mp.get(mapa_directores, director)
+        lista = entrada['value']
+        lt.addLast(lista, tupla)
+        mp.put(mapa_directores, director, lista)
+        i += 1
+    return mapa_directores
+
 # ==============================
 # Funciones de consulta
 # ==============================
@@ -119,11 +147,41 @@ def descubrir_productoras(mapa, productora: str) -> tuple:
     promedio = round(suma/total_peliculas, 2)
     return peliculas, total_peliculas, promedio
 
+def descubrir_director(mapa, director: str) -> tuple:
+    entrada = mp.get(mapa, director)
+    lista_peliculas = entrada['value']
+    total_peliculas = lt.size(entrada['value'])
+    peliculas = lt.newList(datastructure='ARRAY_LIST')
+    i = 1
+    suma = 0
+    while i <= total_peliculas:
+        pelicula = lt.getElement(lista_peliculas, i)
+        nombre_pelicula = pelicula[0]
+        lt.addLast(peliculas, nombre_pelicula)
+        vote_average = float(pelicula[1])
+        suma += vote_average
+        i += 1
+    promedio = round(suma/total_peliculas, 2)
+    return peliculas, total_peliculas, promedio
+
 # ==============================
 # Funciones de Comparacion
 # ==============================
 
 def comparar_productoras(keyname, author):
+    """
+    Compara dos productoras. El primero es una cadena
+    y el segundo un entry de un map
+    """
+    authentry = me.getKey(author)
+    if (keyname == authentry):
+        return 0
+    elif (keyname > authentry):
+        return 1
+    else:
+        return -1
+
+def comparar_directores(keyname, author):
     """
     Compara dos productoras. El primero es una cadena
     y el segundo un entry de un map
