@@ -75,7 +75,7 @@ def nuevo_catalogo(details: list, casting: list):
     catalogo = {"productoras": mapa_productoras(details),
                 "directores": mapa_directores(casting, details),
                 "paises": mapa_paises(casting, details),
-                "generos: mapa_generos(lista)}
+                "generos": mapa_generos(details)}
     return catalogo
 
 # ==============================
@@ -109,23 +109,24 @@ def mapa_generos(lista: list):
         pelicula = lt.getElement(lista, i)
         generos = pelicula['genres']
         separacion_generos = generos.split("|")
-        lista_generos = lt.newList(datastructure="ARRAY_LIST")
+        generos_lista = lt.newList(datastructure='ARRAY_LIST')
         for genero in separacion_generos:
-            lt.addLast(lista_generos, genero)
+            lt.addLast(generos_lista, genero)
         nombre_pelicula = pelicula['original_title']
         vote_count = pelicula['vote_count']
         tupla = nombre_pelicula, vote_count
-        i = 1
-        while i <= lista_generos['size']:
-            genero = lt.getElement(lista_generos, i)
+        j = 1
+        tamanio_generos_lista = generos_lista["size"]
+        while j <= tamanio_generos_lista:
+            genero = lt.getElement(generos_lista, j)
             existe_genero = mp.contains(mapa_generos, genero)
             if not existe_genero:
                 lista_pelicula = lt.newList(datastructure='SINGLE_LINKED')
                 mp.put(mapa_generos,genero,lista_pelicula)
-                i += 1
             entrada = mp.get(mapa_generos, genero)
-            lt.addLast(entrada['value'], tupla)
-            i += 1       
+            lt.addLast(entrada['value'], tupla)    
+            j += 1
+        i += 1
     return mapa_generos
 
 def mapa_directores(casting: list, details: list):
@@ -139,7 +140,7 @@ def mapa_directores(casting: list, details: list):
         pelicula_details = lt.getElement(details, i)
         director = pelicula_casting['director_name']
         id_casting = pelicula_casting['id']
-        id_details = pelicula_details['\ufeffid']
+        id_details = pelicula_details['id']
         vote_average = pelicula_details['vote_average']
         nombre_pelicula = pelicula_details['original_title']
         tupla = nombre_pelicula, vote_average
@@ -166,7 +167,7 @@ def mapa_paises(casting: list, details: list):
         pelicula_details = lt.getElement(details, i)
         director = pelicula_casting['director_name']
         id_casting = pelicula_casting['id']
-        id_details = pelicula_details['\ufeffid']
+        id_details = pelicula_details['id']
         anio_produccion = pelicula_details['release_date']
         nombre_pelicula = pelicula_details['original_title']
         pais_produccion = pelicula_details['production_countries']
