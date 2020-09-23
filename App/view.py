@@ -67,15 +67,18 @@ def printMenu():
     print("0- Salir")
 
 def main():
-    lista = ''
+    details = ''
+    casting = ''
     catalogo = ''
 
     while True:
         printMenu()
         inputs = input('Seleccione una opción para continuar\n')
         if int(inputs[0]) == 1:
-            lista = controller.loadCSVFile(archivo_smallmoviesdetailscleaned, 1)
-            datos = controller.infoArchivoCsv(lista)
+
+            details = controller.loadCSVFile(archivo_AllMoviesDetailsCleaned, 1)
+            casting = controller.loadCSVFile(archivo_allmoviescastingraw, 1)
+            datos = controller.infoArchivoCsv(details)
             print('El número de películas cargadas es:', datos[0],'\n')
             print('Primera película:\n')
             print('Título:', datos[1][0])
@@ -92,7 +95,7 @@ def main():
         
         elif  int(inputs[0]) == 2:
             t1_start = process_time() #tiempo inicial
-            catalogo = controller.cargar_catalogo(lista)
+            catalogo = controller.cargar_catalogo(details, casting)
             print('El catálogo se cargó correctamente. :)\n')
             t1_stop = process_time() #tiempo final
             print("Tiempo de ejecución",t1_stop-t1_start,"segundos\n")
@@ -101,7 +104,7 @@ def main():
             t1_start = process_time() #tiempo inicial
             productora = input('Ingrese el nombre de la compañia de producción: \n')
             datos = controller.infoProductora(catalogo['productoras'],productora)
-            print('La lista de películas producidas por la productora',productora,'es:')
+            print('\nLa lista de películas producidas por la productora',productora,'es:\n')
             i = 1
             while i <= datos[1]:
                 pelicula = lt.getElement(datos[0], i)
@@ -111,13 +114,27 @@ def main():
             print('\nLa calificación promedio de las películas de la productora', productora, 'es de:',datos[2], '\n')
             t1_stop = process_time() #tiempo final
             print("Tiempo de ejecución",t1_stop-t1_start,"segundos\n")
-        
+
+        elif  int(inputs[0]) == 4:
+            t1_start = process_time() #tiempo inicial
+            director = input('Ingrese el nombre del director: \n')
+            datos = controller.infoDirector(catalogo['directores'],director)
+            print('\nLa lista de películas producidas por el director',director,'es:\n')
+            i = 1
+            while i <= datos[1]:
+                pelicula = lt.getElement(datos[0], i)
+                print(pelicula)
+                i += 1
+            print('\nLa cantidad de películas producidas por',director,'es de:', datos[1])
+            print('\nLa calificación promedio de las películas del director', director, 'es de:',datos[2], '\n')
+            t1_stop = process_time() #tiempo final
+            print("Tiempo de ejecución",t1_stop-t1_start,"segundos\n")
+            
         elif  int(inputs[0]) == 6:
             t1_start = process_time() #tiempo inicial
             genero = input('Ingrese el género cinematográfico: \n')
             datos = controller.infoGenero(catalogo['generos'], genero)
             print('La lista de todas las películas asociadas al género', genero, 'es:')
-            i = 1
             while i <= datos[1]:
                 pelicula = lt.getElement(datos[0], i)
                 print(pelicula)
@@ -126,7 +143,19 @@ def main():
             print('\nEl promedio de votos de las películas del género', genero, 'es de:', datos[2], '\n')
             t1_stop = process_time() #tiempo final
             print("Tiempo de ejecución",t1_stop-t1_start,"segundos\n")
-       
+        
+        elif  int(inputs[0]) == 7:
+            t1_start = process_time() #tiempo inicial
+            pais = input('Ingrese el nombre del país de producción: \n')
+            datos = controller.infoPais(catalogo['paises'],pais)
+            print('\nLa lista de películas producidas en el país',pais,'es:\n')
+            i = 1
+            while i <= datos[1]:
+                pelicula = lt.getElement(datos[0], i)
+                print('El nombre de la película es:', pelicula[0], '\nLa fecha de producción es:', pelicula[1], '\nEl productor de la película es:', pelicula[2],'\n')
+                i += 1
+            t1_stop = process_time() #tiempo final
+            print("Tiempo de ejecución",t1_stop-t1_start,"segundos\n")
 
         else:
             sys.exit(0)
