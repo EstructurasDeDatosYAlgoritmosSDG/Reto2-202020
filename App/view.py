@@ -39,13 +39,13 @@ operación seleccionada.
 # ___________________________________________________
 #  Ruta a los archivos
 # ___________________________________________________
-
-
-
-
+archivo_AllMoviesDetailsCleaned = 'Data/themoviesdb/AllMoviesDetailsCleaned.csv'
+archivo_smallmoviesdetailscleaned = 'Data/themoviesdb/SmallMoviesDetailsCleaned.csv'
+archivo_allmoviescastingraw = 'Data/themoviesdb/AllMoviesCastingRaw.csv'
+archivo_moviescastingraw_small = 'Data/themoviesdb/MoviesCastingRaw-small.csv'
 
 # ___________________________________________________
-#  Funciones para imprimir la inforamación de
+#  Funciones para imprimir la información de
 #  respuesta.  La vista solo interactua con
 #  el controlador.
 # ___________________________________________________
@@ -60,6 +60,10 @@ def printMenu():
     print("1- Información archivo cargado")
     print("2- Cargar catálogo")
     print('3- Conocer compañia de producción')
+    print('4- Conocer a un director')
+    print('5- Conocer a un actor')
+    print('6- Entender un género cinematográfico')
+    print('7- Encontrar películas por país')
     print("0- Salir")
 
 def main():
@@ -70,7 +74,7 @@ def main():
         printMenu()
         inputs = input('Seleccione una opción para continuar\n')
         if int(inputs[0]) == 1:
-            lista = controller.loadCSVFile('Data/themoviesdb/AllMoviesDetailsCleaned.csv', 1)
+            lista = controller.loadCSVFile(archivo_smallmoviesdetailscleaned, 1)
             datos = controller.infoArchivoCsv(lista)
             print('El número de películas cargadas es:', datos[0],'\n')
             print('Primera película:\n')
@@ -107,6 +111,22 @@ def main():
             print('\nLa calificación promedio de las películas de la productora', productora, 'es de:',datos[2], '\n')
             t1_stop = process_time() #tiempo final
             print("Tiempo de ejecución",t1_stop-t1_start,"segundos\n")
+        
+        elif  int(inputs[0]) == 6:
+            t1_start = process_time() #tiempo inicial
+            genero = input('Ingrese el género cinematográfico: \n')
+            datos = controller.infoGenero(catalogo['generos'], genero)
+            print('La lista de todas las películas asociadas al género', genero, 'es:')
+            i = 1
+            while i <= datos[1]:
+                pelicula = lt.getElement(datos[0], i)
+                print(pelicula)
+                i += 1
+            print('\nEl total de películas del género', genero, 'es de:', datos[1])
+            print('\nEl promedio de votos de las películas del género', genero, 'es de:', datos[2], '\n')
+            t1_stop = process_time() #tiempo final
+            print("Tiempo de ejecución",t1_stop-t1_start,"segundos\n")
+       
 
         else:
             sys.exit(0)

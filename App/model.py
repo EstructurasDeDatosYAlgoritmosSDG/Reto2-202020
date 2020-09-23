@@ -73,6 +73,7 @@ def loadCSVFile (file, tipo_lista, cmpfunction=None, sep=";"):
 
 def nuevo_catalogo(lista: list):
     catalogo = {"productoras": mapa_productoras(lista)}
+    catalogo = {"generos": mapa_generos(lista)}
     return catalogo
 
 # ==============================
@@ -98,6 +99,33 @@ def mapa_productoras(lista: list):
         i += 1
     return mapa_productoras
 
+def mapa_generos(lista: list):
+    tamanio_lista = lista['size']
+    mapa_generos = mp.newMap(numelements=tamanio_lista,maptype='PROBING',loadfactor=0.5, comparefunction=comparar_generos)
+    i = 1
+    while i <= tamanio_lista:
+        pelicula = lt.getElement(lista, i)
+        generos = pelicula['genres']
+        separacion_generos = generos.split("|")
+        lista_generos = lt.newList(datastructure="ARRAY_LIST")
+        for genero in separacion_generos:
+            lt.addLast(lista_generos, genero)
+        nombre_pelicula = pelicula['original_title']
+        vote_count = pelicula['vote_count']
+        tupla = nombre_pelicula, vote_count
+        i = 1
+        while i <= lista_generos['size']:
+            genero = lt.getElement(lista_generos, i)
+            existe_genero = mp.contains(mapa_generos, genero)
+            if not existe_genero:
+                lista_pelicula = lt.newList(datastructure='SINGLE_LINKED')
+                mp.put(mapa_generos,genero,lista_pelicula)
+                i += 1
+            entrada = mp.get(mapa_generos, genero)
+            lt.addLast(entrada['value'], tupla)
+            i += 1       
+    return mapa_generos
+
 # ==============================
 # Funciones de consulta
 # ==============================
@@ -119,16 +147,46 @@ def descubrir_productoras(mapa, productora: str) -> tuple:
     promedio = round(suma/total_peliculas, 2)
     return peliculas, total_peliculas, promedio
 
+def entender_genero(mapa, genero: str) -> tuple:
+    entrada = mp.get(mapa, genero)
+    lista_peliculas = entrada['value']
+    total_peliculas = lt.size(entrada['value'])
+    peliculas = lt.newList(datastructure='ARRAY_LIST')
+    i = 1
+    suma = 0
+    while i <= total_peliculas:
+        pelicula = lt.getElement(lista_peliculas, i)
+        nombre_pelicula = pelicula[0]
+        lt.addLast(peliculas, nombre_pelicula)
+        vote_count = float(pelicula[1])
+        suma += vote_count
+        i += 1
+    promedio = round(suma/total_peliculas, 2)
+    return peliculas, total_peliculas, promedio
+
 # ==============================
 # Funciones de Comparacion
 # ==============================
 
-def comparar_productoras(keyname, author):
+def comparar_productoras(keyname, productora):
     """
     Compara dos productoras. El primero es una cadena
     y el segundo un entry de un map
     """
-    authentry = me.getKey(author)
+    authentry = me.getKey(productora)
+    if (keyname == authentry):
+        return 0
+    elif (keyname > authentry):
+        return 1
+    else:
+        return -1
+
+def comparar_generos(keyname, genero):
+    """
+    Compara dos productoras. El primero es una cadena
+    y el segundo un entry de un map
+    """
+    authentry = me.getKey(genero)
     if (keyname == authentry):
         return 0
     elif (keyname > authentry):

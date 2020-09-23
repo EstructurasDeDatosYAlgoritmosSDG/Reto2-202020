@@ -71,6 +71,11 @@ def cargar_catalogo(lista:list):
     catalogo = model.nuevo_catalogo(lista)
     return catalogo
 
+def infoGenero(mapa, lista: list):
+    #Llama los datos obtenidos en model
+    resultado = model.entender_genero(mapa, lista)
+    return resultado
+
 
 
 
