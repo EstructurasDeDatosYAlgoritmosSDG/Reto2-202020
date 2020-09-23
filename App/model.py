@@ -83,6 +83,7 @@ def nuevo_catalogo(details: list, casting: list):
 # ==============================
 
 def mapa_productoras(lista: list):
+    t1_start = process_time() #tiempo inicial
     tamanio_lista = lista['size']
     mapa_productoras = mp.newMap(numelements=tamanio_lista,maptype='PROBING',loadfactor=0.5, comparefunction=comparar_productoras)
     i = 1
@@ -99,9 +100,12 @@ def mapa_productoras(lista: list):
         entrada = mp.get(mapa_productoras, productora)
         lt.addLast(entrada['value'], tupla)
         i += 1
+    t1_stop = process_time() #tiempo final
+    print("Tiempo de creación del mapa de compañias de producción ",t1_stop-t1_start,"segundos\n")
     return mapa_productoras
 
 def mapa_generos(lista: list):
+    t1_start = process_time() #tiempo inicial
     tamanio_lista = lista['size']
     mapa_generos = mp.newMap(numelements=tamanio_lista,maptype='PROBING',loadfactor=0.5, comparefunction=comparar_generos)
     i = 1
@@ -127,9 +131,12 @@ def mapa_generos(lista: list):
             lt.addLast(entrada['value'], tupla)    
             j += 1
         i += 1
+    t1_stop = process_time() #tiempo final
+    print("Tiempo de creación del mapa de géneros",t1_stop-t1_start,"segundos\n")
     return mapa_generos
 
 def mapa_directores(casting: list, details: list):
+    t1_start = process_time() #tiempo inicial
     # Esta funcion hace el mapa de los directores
     tamanio_casting = casting['size']
     mapa_directores = mp.newMap(numelements=tamanio_casting,maptype='PROBING',loadfactor=0.5, comparefunction=comparar_directores)
@@ -140,7 +147,7 @@ def mapa_directores(casting: list, details: list):
         pelicula_details = lt.getElement(details, i)
         director = pelicula_casting['director_name']
         id_casting = pelicula_casting['id']
-        id_details = pelicula_details['id']
+        id_details = pelicula_details['\ufeffid']
         vote_average = pelicula_details['vote_average']
         nombre_pelicula = pelicula_details['original_title']
         tupla = nombre_pelicula, vote_average
@@ -155,9 +162,12 @@ def mapa_directores(casting: list, details: list):
         lt.addLast(lista, tupla)
         mp.put(mapa_directores, director, lista)
         i += 1
+    t1_stop = process_time() #tiempo final
+    print("Tiempo de creación del mapa de directores",t1_stop-t1_start,"segundos\n")
     return mapa_directores
 
 def mapa_paises(casting: list, details: list):
+    t1_start = process_time() #tiempo inicial
     tamanio_casting = casting['size']
     mapa_paises = mp.newMap(numelements=tamanio_casting,maptype='PROBING',loadfactor=0.5, comparefunction=comparar_paises)
     tamanio_details = details['size']
@@ -167,7 +177,7 @@ def mapa_paises(casting: list, details: list):
         pelicula_details = lt.getElement(details, i)
         director = pelicula_casting['director_name']
         id_casting = pelicula_casting['id']
-        id_details = pelicula_details['id']
+        id_details = pelicula_details['\ufeffid']
         anio_produccion = pelicula_details['release_date']
         nombre_pelicula = pelicula_details['original_title']
         pais_produccion = pelicula_details['production_countries']
@@ -183,6 +193,8 @@ def mapa_paises(casting: list, details: list):
         lt.addLast(lista, tupla)
         mp.put(mapa_paises, pais_produccion, lista)
         i += 1
+    t1_stop = process_time() #tiempo final
+    print("Tiempo de creación del mapa de paises",t1_stop-t1_start,"segundos\n")
     return mapa_paises
 
 # ==============================
@@ -210,6 +222,7 @@ def entender_genero(mapa, genero: str) -> tuple:
     entrada = mp.get(mapa, genero)
     lista_peliculas = entrada['value']
     total_peliculas = lt.size(entrada['value'])
+    print(total_peliculas)
     peliculas = lt.newList(datastructure='ARRAY_LIST')
     i = 1
     suma = 0

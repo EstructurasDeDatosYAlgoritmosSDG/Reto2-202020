@@ -76,8 +76,8 @@ def main():
         inputs = input('Seleccione una opción para continuar\n')
         if int(inputs[0]) == 1:
 
-            details = controller.loadCSVFile(archivo_smallmoviesdetailscleaned, 1)
-            casting = controller.loadCSVFile(archivo_moviescastingraw_small, 1)
+            details = controller.loadCSVFile(archivo_AllMoviesDetailsCleaned, 1)
+            casting = controller.loadCSVFile(archivo_allmoviescastingraw, 1)
             datos = controller.infoArchivoCsv(details)
             print('El número de películas cargadas es:', datos[0],'\n')
             print('Primera película:\n')
