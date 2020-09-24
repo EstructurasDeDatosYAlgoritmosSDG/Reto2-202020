@@ -75,7 +75,8 @@ def nuevo_catalogo(details: list, casting: list):
     catalogo = {"productoras": mapa_productoras(details),
                 "directores": mapa_directores(casting, details),
                 "paises": mapa_paises(casting, details),
-                "generos": mapa_generos(details)}
+                "generos": mapa_generos(details),
+                "actores": mapa_actores(casting,details)}
     return catalogo
 
 # ==============================
@@ -197,6 +198,37 @@ def mapa_paises(casting: list, details: list):
     print("Tiempo de creación del mapa de paises",t1_stop-t1_start,"segundos\n")
     return mapa_paises
 
+def mapa_actores(casting:list, details:list):
+    #Estan función crea el mapa de los actores.
+    tamanio_casting = casting['size']
+    mapa_actores = mp.newMap(numelements=tamanio_casting,maptype='PROBING',loadfactor=0.5,comparefunction=comparar_actores)
+    tamanio_details = details['size']
+    i = 1
+    while i <= tamanio_details:
+        pelicula_casting = lt.getElement(casting,i)
+        pelicula_details = lt.getElement(details,i)
+        actor1 = pelicula_casting['actor1_name']
+        actor2 = pelicula_casting['actor2_name']
+        actor3 = pelicula_casting['actor3_name']
+        actor4 = pelicula_casting['actor4_name']
+        actor5 = pelicula_casting['actor5_name']
+        id_casting = pelicula_casting['id']
+        director = pelicula_casting['director_name']
+        id_details = pelicula_details['\ufeffid']
+        nombre_pelicula = pelicula_details['original_title']
+        tupla = nombre_pelicula, director, actor1, actor2, actor3, actor4, actor5, id_casting
+        if id_casting != id_details:
+            print('Super error')
+        existe_actor = mp.contains(mapa_actores,nombre_pelicula)
+        if not existe_actor:
+            lista_actores = lt.newList(datastructure='SINGLE_LINKED')
+            mp.put(mapa_actores, nombre_pelicula, lista_actores)
+        entrada = mp.get(mapa_actores, nombre_pelicula)
+        lista= entrada["value"]
+        lt.addLast(lista, tupla)
+        mp.put(mapa_actores, nombre_pelicula,lista)
+        i+=1
+    return mapa_actores
 # ==============================
 # Funciones de consulta
 # ==============================
@@ -260,6 +292,74 @@ def descubrir_pais(mapa, pais: str) -> tuple:
     peliculas = lista_peliculas
     return peliculas, total_peliculas
 
+def descubrir_actor(mapa, actor:str) -> tuple:
+    entrada = mp.get(mapa, actor)
+    lista_peliculas = entrada['value']
+    total_peliculas = lt.size(entrada['value'])
+    peliculas= lt.newList(datastructure='ARRAY_LIST')
+    i=1
+    nombre_actor=' '
+    pelicula_id = ' '
+    name_p= ' '
+    directores = lt.newList(datastructure='SINGLE_LINKED')
+    ids = lt.newList(datastructure='SINGLE_LINKED')
+    nombres = lt.newList(datastructure='SINGLE_LINKED')
+    while i <= total_peliculas:
+        pelicula= lt.getElement(lista_peliculas,i)
+        actor1 = pelicula[2]
+        actor2 = pelicula[3]
+        actor3 = pelicula[4]
+        actor4 = pelicula[5]
+        actor5 = pelicula[6]
+        ides = pelicula[7]
+        directores = pelicula[1]
+        nombres_peliculas = pelicula[0]
+        if(actor1 == actor):
+            nombre_actor= actor1
+            pelicula_id= ides
+            name_p= nombres_peliculas
+        elif(actor2 == actor):
+            nombre_actor=actor2
+            pelicula_id= ides
+            name_p= nombres_peliculas
+        elif(actor3== actor):
+            nombre_actor = actor3
+            pelicula_id= ides
+            name_p= nombres_peliculas
+        elif(actor4== actor):
+            nombre_actor = actor4
+            pelicula_id= ides
+            name_p= nombres_peliculas
+        elif(actor5== actor):
+            nombre_actor = actor5
+            pelicula_id= ides
+            name_p= nombres_peliculas
+
+        lt.addLast(peliculas,nombre_actor)
+        lt.addLast(ids,pelicula_id)
+        lt.addLast(nombres,name_p)
+        i += 1
+
+    j=0
+    tamanio_peliculas = lt.size(nombres)
+    director_mayor = ' '
+    while j < tamanio_peliculas:
+
+        nombre_director = lt.getElement(directores,j)
+        contador = 1
+        mayor = 0
+        l=1
+        while l < tamanio_peliculas:
+
+            if(nombre_director[j] == nombre_director[l] and contador >= mayor):
+                contador +=1
+                mayor = contador
+                director_mayor = nombre_director[j]
+            l+=1
+        j+=1
+
+    return nombre_actor, nombres, director_mayor, tamanio_peliculas
+
 # ==============================
 # Funciones de Comparacion
 # ==============================
@@ -306,6 +406,19 @@ def comparar_directores(keyname, author):
 def comparar_paises(keyname, author):
     """
     Compara dos países. El primero es una cadena
+    y el segundo un entry de un map
+    """
+    authentry = me.getKey(author)
+    if (keyname == authentry):
+        return 0
+    elif (keyname > authentry):
+        return 1
+    else:
+        return -1
+
+def comparar_actores(keyname, author):
+    """
+    Compara dos productoras. El primero es una cadena
     y el segundo un entry de un map
     """
     authentry = me.getKey(author)

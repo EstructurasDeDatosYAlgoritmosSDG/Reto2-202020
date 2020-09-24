@@ -129,6 +129,21 @@ def main():
             print('\nLa calificación promedio de las películas del director', director, 'es de:',datos[2], '\n')
             t1_stop = process_time() #tiempo final
             print("Tiempo de ejecución",t1_stop-t1_start,"segundos\n")
+
+        elif int(inputs[0]) == 5:
+            t1_start = process_time() #tiempo inicial
+            actor= input('Ingrese el nombre del actor: \n')
+            datos= controller.infoActores(catalogo['actores'],actor)
+            print('\nLa lista de películas en la que actuó ', actor,'es: \n')
+            i=1
+            while i < datos[1]:
+                pelicula= lt.getElement(datos[1],i)
+                print(pelicula)
+                i+=1
+            print('\nLa cantidad de películas en las que actuó es de: ', datos[3])
+            print('\nEl director con el que más trabajó fue:', datos[2])
+            t1_stop = process_time() #tiempo final
+            print("Tiempo de ejecución",t1_stop-t1_start,"segundos\n")
             
         elif  int(inputs[0]) == 6:
             t1_start = process_time() #tiempo inicial
@@ -158,9 +173,13 @@ def main():
             t1_stop = process_time() #tiempo final
             print("Tiempo de ejecución",t1_stop-t1_start,"segundos\n")
 
+
+
         else:
             sys.exit(0)
     sys.exit(0)
+    
 
 if __name__ == "__main__":
     main()
+
