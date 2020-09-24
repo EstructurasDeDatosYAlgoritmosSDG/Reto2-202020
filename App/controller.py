@@ -84,6 +84,10 @@ def infoGenero(mapa, lista: list):
     resultado = model.entender_genero(mapa, lista)
     return resultado
 
+def infoActores(mapa, actor):
+    resultado= model.descubrir_actor(mapa, actor)
+
+    return resultado
 
 
 
